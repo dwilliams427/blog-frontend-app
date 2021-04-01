@@ -1,21 +1,22 @@
 <template>
   <div class="posts-edit">
-    <div class="container">
+    <form v-on:submit.prevent="editPost(post)">
       <h1>Edit Post</h1>
-      <form v-on:submit.prevent="editPost(post)">
-        <ul>
-          <li v-for="error in errors" v-bind:key="error">{{ errors }}</li>
-        </ul>
+      <ul>
+        <li class="text-danger" v-for="error in errors" v-bind:key="error">
+          {{ error }}
+        </li>
+      </ul>
+      <div class="form-group">
         <label>Title:</label>
-
-        <input type="text" v-model="post.title" />
-        Body:
-        <input type="text" v-model="post.body" />
-        <!-- Image:
-        <input type="text" v-model="post.image" /> -->
-        <button v-on:click="editPost(post)">Update</button>
-      </form>
-    </div>
+        <input type="text" class="form-control" v-model="post.title" />
+      </div>
+      <div class="form-group">
+        <label>Body:</label>
+        <input type="text" class="form-control" v-model="post.body" />
+      </div>
+      <input type="submit" class="btn btn-primary" value="Submit" />
+    </form>
   </div>
 </template>
 
@@ -26,6 +27,7 @@ export default {
   data: function () {
     return {
       post: {},
+      errors: [],
     };
   },
   created: function () {
@@ -43,13 +45,12 @@ export default {
       };
       axios
         .patch("/api/posts/" + this.$route.params.id, params)
-        .then((response) => {
-          console.log("editing post", response);
+        .then(() => {
+          console.log("editing post");
           this.$router.push("/posts/" + this.recipe.id);
         })
         .catch((error) => {
           console.log("error" + error.response);
-          this.errors = error.response.data.errors;
         });
     },
   },
